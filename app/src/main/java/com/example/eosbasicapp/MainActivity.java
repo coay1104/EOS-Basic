@@ -11,13 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton addContact;
     private ImageButton contact;
     private TextView phoneNum;
-    private TextView[] dials=new TextView[10];
+    private TextView[] dials = new TextView[10];
     private TextView star;
     private TextView sharp;
     private ImageButton message;
@@ -33,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
         setUpUi();
     }
 
-    private void setUpUi(){
+    private void setUpUi() {
         addContact = findViewById(R.id.main_ibtn_add);
         contact = findViewById(R.id.main_ibtn_contact);
         phoneNum = findViewById(R.id.main_tv_phone);
 
-        for(int i=0;i<dials.length;i++){
-            dials[i] = findViewById(getResourceID("main_tv_"+i, "id",this));
+        for (int i = 0; i < dials.length; i++) {
+            dials[i] = findViewById(getResourceID("main_tv_" + i, "id", this));
         }
         star = findViewById(R.id.main_tv_star);
         sharp = findViewById(R.id.main_tv_sharp);
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: 연락처 추가
-                Toast.makeText(MainActivity.this,"test",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "test", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -63,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setOnClickDial(star, "*");
-        setOnClickDial(sharp,"#");
+        setOnClickDial(sharp, "#");
 
-        for(int i=0;i<10;i++){
-            setOnClickDial(dials[i],String.valueOf(i));
+        for (int i = 0; i < 10; i++) {
+            setOnClickDial(dials[i], String.valueOf(i));
         }
 
         message.setOnClickListener(new View.OnClickListener() {
@@ -86,37 +87,36 @@ public class MainActivity extends AppCompatActivity {
         backspace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(phoneNum.getText().length() > 0) {
-                    if(phoneNum.getText().length()==5||phoneNum.getText().length()==10){
-                            phoneNum.setText(changeToDial(phoneNum.getText().subSequence(0, phoneNum.getText().length() - 1).toString()));
+                if (phoneNum.getText().length() > 0) {
+                    if (phoneNum.getText().length() == 5 || phoneNum.getText().length() == 10) {
+                        phoneNum.setText(changeToDial(phoneNum.getText().subSequence(0, phoneNum.getText().length() - 1).toString()));
                     }
-                    phoneNum.setText(changeToDial(phoneNum.getText().subSequence(0,phoneNum.getText().length()-1).toString()));
+                    phoneNum.setText(changeToDial(phoneNum.getText().subSequence(0, phoneNum.getText().length() - 1).toString()));
                 }
             }
         });
     }
 
-    private void setOnClickDial(View view, final String input){
+    private void setOnClickDial(View view, final String input) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                phoneNum.setText(changeToDial(phoneNum.getText()+input));
+                phoneNum.setText(changeToDial(phoneNum.getText() + input));
             }
         });
     }
 
-    private int getResourceID(final String resName, final String resType, final Context ctx){
+    private int getResourceID(final String resName, final String resType, final Context ctx) {
         final int ResourceID =
-                ctx.getResources().getIdentifier(resName,resType,ctx.getApplicationInfo().packageName);
-        if(ResourceID==0){
-            throw new IllegalArgumentException("No resource string found with name "+resName);
-        }
-        else{
+                ctx.getResources().getIdentifier(resName, resType, ctx.getApplicationInfo().packageName);
+        if (ResourceID == 0) {
+            throw new IllegalArgumentException("No resource string found with name " + resName);
+        } else {
             return ResourceID;
         }
     }
 
-    private  String changeToDial(String phoneNum) {
+    private String changeToDial(String phoneNum) {
 
         // 전화번호 기준 01037440834
         //4글자 이상일때 3번째 숫자 다음에 010-
@@ -130,11 +130,18 @@ public class MainActivity extends AppCompatActivity {
                 phoneNum = phoneNum.substring(0, 3) + "-" + phoneNum.substring(3, phoneNum.length());
             }
         }
-        if (phoneNum.length() >=9) {
+        if(phoneNum.length()==12){
+            phoneNum=phoneNum.replaceAll("-","");
+            phoneNum = phoneNum.substring(0, 3) + "-" + phoneNum.substring(3, phoneNum.length());
+            phoneNum = phoneNum.substring(0, 7) + "-" + phoneNum.substring(7, phoneNum.length());
+        }
+        if (phoneNum.length() >=9&&phoneNum.length()!=12){
             if(phoneNum.indexOf("-",8)==8){
             }
             else{
-                phoneNum = phoneNum.substring(0, 8) + "-" + phoneNum.substring(8, phoneNum.length());
+                phoneNum=phoneNum.replaceAll("-","");
+                phoneNum = phoneNum.substring(0, 3) + "-" + phoneNum.substring(3, phoneNum.length());
+                phoneNum = phoneNum.substring(0,8) + "-" + phoneNum.substring(8, phoneNum.length());
             }
         }
         if(phoneNum.length()>=14){
@@ -144,5 +151,5 @@ public class MainActivity extends AppCompatActivity {
             phoneNum=phoneNum.replaceAll("-","");
         }
         return phoneNum;
+    } 
     }
-}
