@@ -87,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(phoneNum.getText().length() > 0) {
+                    if(phoneNum.getText().length()==5||phoneNum.getText().length()==10){
+                            phoneNum.setText(changeToDial(phoneNum.getText().subSequence(0, phoneNum.getText().length() - 1).toString()));
+                    }
                     phoneNum.setText(changeToDial(phoneNum.getText().subSequence(0,phoneNum.getText().length()-1).toString()));
                 }
             }
