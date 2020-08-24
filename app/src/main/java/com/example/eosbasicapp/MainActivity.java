@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -64,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode==1104){
             if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED&&grantResults[1]==PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(this, "권한 허용됨 ", Toast.LENGTH_SHORT).show();
+            } else{
+                Toast.makeText(this,"권한 허용이 필요합니다. 설정에서 허용을 해주세요.",Toast.LENGTH_SHORT).show();
+                Log.d("PermissionDenied", "권한이 거부되어 앱을 종료합니다.");
+                finish();
             }
         }
     }
@@ -85,17 +90,19 @@ public class MainActivity extends AppCompatActivity {
         addContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 연락처 추가
+                Intent addIntent = new Intent(MainActivity.this, addEditActivity.class);
+                startActivity(addIntent);
                 Toast.makeText(MainActivity.this, "test", Toast.LENGTH_SHORT).show();
             }
         });
 
         contact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO: 연락처
-            }
-        });
+                                       @Override
+                                       public void onClick(View view) {
+                                           Intent contactIntent = new Intent(MainActivity.this, ContactActivity.class);
+                                           startActivity(contactIntent);
+                                       }
+                                   });
 
         setOnClickDial(star, "*");
         setOnClickDial(sharp, "#");
