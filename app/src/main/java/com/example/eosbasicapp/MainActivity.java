@@ -11,15 +11,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton message;
     private ImageButton call;
     private ImageButton backspace;
+
+    private TextView name;
 
 
     @Override
@@ -74,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpUi() {
+
+        name = findViewById(R.id.main_tv_name);
+
         addContact = findViewById(R.id.main_ibtn_add);
         contact = findViewById(R.id.main_ibtn_contact);
         phoneNum = findViewById(R.id.main_tv_phone);
@@ -90,9 +91,10 @@ public class MainActivity extends AppCompatActivity {
         addContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent addIntent = new Intent(MainActivity.this, addEditActivity.class);
+                Intent addIntent = new Intent(MainActivity.this, AddEditActivity.class);
+                addIntent.putExtra("phone_num",phoneNum.getText().toString());
+                addIntent.putExtra("add_edit","add");
                 startActivity(addIntent);
-                Toast.makeText(MainActivity.this, "test", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -143,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                         backspace.setVisibility(View.GONE);
                     }
                 }
+                findPhone();
             }
         });
 
@@ -154,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 message.setVisibility(View.GONE);
                 backspace.setVisibility(View.GONE);
 
+                findPhone();
                 return true;
             }
         });
@@ -167,8 +171,30 @@ public class MainActivity extends AppCompatActivity {
 
                 message.setVisibility(View.VISIBLE);
                 backspace.setVisibility(View.VISIBLE);
+
+                findPhone();
             }
         });
+    }
+
+    private void findPhone() {
+        String find = phoneNum.getText().toString().replaceAll("-", "");
+        StringBuilder addName = new StringBuilder("");
+        int num = 0;
+        for (int i = 0; i < DummyDate.contacts.size(); i++) {
+            if (DummyDate.contacts.get(i).getPhone().replaceAll("-", "").contains(find)) {
+                name.setText(DummyDate.contacts.get(i).getName());
+                addName.append(DummyDate.contacts.get(i).getName());
+                addName.append(" ");
+                num++;
+            }
+        }
+        if(num == 0){
+            name.setText("");
+        } else if(num > 1){
+            name.setText(addName);
+        }
+        num = 0;
     }
 
     private int getResourceID(final String resName, final String resType, final Context ctx) {
